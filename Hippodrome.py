@@ -1,11 +1,44 @@
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
-
+from random import randint
 #**************************************
 # ОТСЮДА БУДЕМ ПИСПТЬ МЕЬОДЫ И ФУНКЦИИ
 #**************************************
+
+# Движение лошадей
+def moveHorse():
+    global x01, x02, x03, x04
+
+    speed01 = randint(3, 10) / 10
+    speed02 = randint(3, 10) / 10
+    speed03 = randint(3, 10) / 10
+    speed04 = randint(3, 10) / 10
+
+    x01 += (speed01 * randint(1, (7 - state01))) / state01
+    x02 += (speed02 * randint(1, (7 - state02))) / state02
+    x03 += (speed03 * randint(1, (7 - state03))) / state03
+    x04 += (speed04 * randint(1, (7 - state04))) / state04
+
+    horsePlaceInWindow()
     
+    if (x01 < 952 and
+        x02 < 952 and
+        x03 < 952 and
+        x04 < 952):
+        root.after(5, moveHorse)
+
+# При нажатии на кнопку СТАРТ
+def runHorse():
+    global  money
+    startButton['state'] = 'disabled'
+    stavka01['state'] = 'disabled'
+    stavka02['state'] = 'disabled'
+    stavka03['state'] = 'disabled'
+    stavka04['state'] = 'disabled'
+    money -= summ01.get() + summ02.get() + summ03.get() + summ04.get()
+    moveHorse()
+  
 # Вызываем каждый раз при выборе любого Combobox
 def refreshCombo(eventObject):
     summ =summ01.get() +  summ02.get() + summ03.get() + summ04.get()
@@ -16,6 +49,7 @@ def refreshCombo(eventObject):
     stavka03['values'] = getValues(int(money - summ02.get() - summ01.get() -  summ04.get()))
     stavka04['values'] = getValues(int(money - summ02.get() - summ03.get() -  summ01.get()))
 
+    # Выключаем или включаем кнопку СТАРТ
     if (summ > 0):
         startButton['state'] = 'normal'
     else:
@@ -89,6 +123,7 @@ def horsePlaceInWindow():
     
 root = Tk()
 
+
 #**************************************
 # ОТСЮДА ОПРЕДЕЛИМ ЗНАЧЕНИЯ ПЕРЕМЕННЫХ
 #**************************************
@@ -97,6 +132,12 @@ root = Tk()
 valuta = 'руб.'
 defaultMoney = 10000
 money = 0
+
+# Погода
+weather = randint(1, 5)
+
+# Время суток
+timeDay = randint(1, 4)
 
 #Размер окна программы
 WIDTH = 1024
@@ -119,7 +160,7 @@ nameHorse04 = 'Hoof'
 #*************************************************
 
 # Создаем главное окно
-#Вычисляем координаты для размещения окна по центру
+# Вычисляем координаты для размещения окна по центру
 POS_X = root.winfo_screenwidth() // 2 - WIDTH // 2
 POS_Y = root.winfo_screenheight() // 2 - HEIGHT // 2
 
@@ -265,7 +306,15 @@ stavka03.current(0)
 stavka04.current(0)
 
 # УДАЛИТЬ
+stavka01.current(1)
+refreshCombo('')
+startButton['command'] = runHorse
 
+# Состояние лошадей 1 - великолепно! 5 - ужасно больная.
+state01 = randint(1, 5)
+state02 = randint(1, 5)
+state03 = randint(1, 5)
+state04 = randint(1, 5)
 
 #Output of the main window
 root.mainloop()
